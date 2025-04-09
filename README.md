@@ -70,7 +70,7 @@ Voici la structure générale du projet :
 │   └── ml.dockerfile
 └── .github/
     ├── workflows/              # GitHub Actions CI/CD
-    └── ISSUE_TEMPLATE/```
+    └── ISSUE_TEMPLATE/
 
 ## Contribuer
 1. Fork ce repository.
