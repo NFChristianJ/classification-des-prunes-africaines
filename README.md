@@ -3,9 +3,31 @@
 ## Description
 Ce projet vise à développer un modèle de classification supervisée pour identifier des classes de prunes africaines à partir d'images. Le modèle sera intégré dans une application web et mobile 
 
+## Objectifs
+- Créer un modèle capable de classer les prunes africaines selon leur espèce.
+- Développer une application web pour intégrer le modèle de classification.
+- Emballer ce modèle dans une application mobile si le temps le permet.
+
+## Installation
+1. Clonez le dépôt :
+   ```bash
+   git clone https://github.com/NFChristianJ/classification-des-prunes-africaines.git
+   cd classification-des-prunes-africaines
+   ```
+
+2. Créez un environnement virtuel et installez les dépendances Python :
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # Linux/MacOS
+   venv\Scripts\activate     # Windows
+   pip install -r backend/requirements.txt
+   ```
+
+3. Assurez-vous d’avoir toutes les dépendances nécessaires pour le frontend et mobile en suivant les instructions dans les répertoires `frontend` et `mobile`.
+
 ## Structure du projet
 Voici la structure générale du projet :
-classification-des-prunes-africaines/
+```classification-des-prunes-africaines/
 ├── .gitignore
 ├── README.md
 ├── LICENSE
@@ -48,8 +70,7 @@ classification-des-prunes-africaines/
 │   └── ml.dockerfile
 └── .github/
     ├── workflows/              # GitHub Actions CI/CD
-    └── ISSUE_TEMPLATE/
-
+    └── ISSUE_TEMPLATE/```
 
 ## Contribuer
 1. Fork ce repository.
@@ -60,8 +81,8 @@ classification-des-prunes-africaines/
 6. Crée une Pull Request.
 
 ## Auteurs
-- NFChristianJ
-- Ndjana Clement
+- NFChristianJ (Chef de projet)
+- Ndjana Clement 
 - SCMC24
 - Desiré Voukeng
 - Bibiane Danielle Nguemtchueng Tsemo
