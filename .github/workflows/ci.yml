@@ -1,0 +1,42 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Python environment (par exemple, pour le backend ou ML)
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      # Install dependencies (pour le backend ou ML par exemple)
+      - name: Install dependencies
+        run: |
+          pip install -r backend/requirements.txt
+          pip install -r ml/requirements.txt
+
+      # Run tests (pour le backend et le ML)
+      - name: Run tests
+        run: |
+          pytest backend/tests/
+          pytest ml/tests/
+
+      # Optionnel : Build frontend (si tu veux aussi l'inclure)
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
