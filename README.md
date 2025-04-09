@@ -27,7 +27,8 @@ Ce projet vise à développer un modèle de classification supervisée pour iden
 
 ## Structure du projet
 Voici la structure générale du projet :
-```classification-des-prunes-africaines/
+```
+classification-des-prunes-africaines/
 ├── .gitignore
 ├── README.md
 ├── LICENSE
@@ -71,7 +72,7 @@ Voici la structure générale du projet :
 └── .github/
     ├── workflows/              # GitHub Actions CI/CD
     └── ISSUE_TEMPLATE/
-
+```
 ## Contribuer
 1. Fork ce repository.
 2. Crée une nouvelle branche (`git checkout -b feature-nouvelle-fonctionnalité`).
