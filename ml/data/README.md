@@ -56,6 +56,8 @@ Auteur : *Arnaud Fadja*
 
 ## 📝 Remarque importante
 
+> si vous souhaitez avoir le meme repartition des donnees que celle utilisé pour l'entrainement du modele, executer le script split.py en modifiant les chemins vers le dataset et le nouveau repertoire par ceux que vous utiliseriez dans votre stockage
+
 > ⚠️ **Le jeu de données est trop volumineux pour être versionné avec Git**. Il est donc ignoré dans le fichier `.gitignore` et ne sera pas synchronisé avec GitHub.  
 > Chaque membre de l’équipe devra le télécharger et l’intégrer manuellement.
 
