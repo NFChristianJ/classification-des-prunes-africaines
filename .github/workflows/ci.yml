@@ -12,31 +12,48 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Checkout the code
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Set up Python environment (par exemple, pour le backend ou ML)
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.9'
 
-      # Install dependencies (pour le backend ou ML par exemple)
-      - name: Install dependencies
+      - name: Install backend dependencies (si backend existe)
         run: |
-          pip install -r backend/requirements.txt
-          pip install -r ml/requirements.txt
+          if [ -f backend/requirements.txt ]; then
+            pip install -r backend/requirements.txt
+          fi
 
-      # Run tests (pour le backend et le ML)
-      - name: Run tests
+      - name: Install ML dependencies (si ML existe)
         run: |
-          pytest backend/tests/
-          pytest ml/tests/
+          if [ -f ml/requirements.txt ]; then
+            pip install -r ml/requirements.txt
+          fi
 
-      # Optionnel : Build frontend (si tu veux aussi l'inclure)
-      - name: Build frontend
+      - name: Run backend tests (si dossiers backend/tests existe)
         run: |
-          cd frontend
-          npm install
-          npm run build
+          if [ -d backend/tests ]; then
+            pytest backend/tests/
+          else
+            echo "Pas de tests backend pour l'instant"
+          fi
+
+      - name: Run ML tests (si dossiers ml/tests existe)
+        run: |
+          if [ -d ml/tests ]; then
+            pytest ml/tests/
+          else
+            echo "Pas de tests ML pour l'instant"
+          fi
+
+      - name: Build frontend (si frontend existe)
+        run: |
+          if [ -d frontend ]; then
+            cd frontend
+            npm install
+            npm run build
+          else
+            echo "Pas de frontend pour l'instant"
+          fi
