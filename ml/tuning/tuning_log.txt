@@ -1,0 +1,14 @@
+[Run #1]
+Model: efficientnet_b0
+Batch size: 16
+Learning rate: 0.001
+Accuracy: 87.3%
+
+[Run #2]
+Batch size: 32
+Learning rate: 0.0003
+Accuracy: 90.04% ✅
+Meilleur score atteint avec early stopping à l'époque 18.
+
+Commentaires :
+- L’augmentation ciblée des classes minoritaires a significativement amélioré le F1-score de "unripe" (+6%) et "spotted" (+8%).

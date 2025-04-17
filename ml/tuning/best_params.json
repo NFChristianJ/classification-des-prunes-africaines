@@ -1,0 +1,10 @@
+{
+    "model": "efficientnet_b0",
+    "batch_size": 32,
+    "learning_rate": 0.0003,
+    "optimizer": "Adam",
+    "epochs": 10,
+    "early_stopping_patience": 5,
+    "augmentation_classes": ["spotted", "unripe"]
+  }
+  
