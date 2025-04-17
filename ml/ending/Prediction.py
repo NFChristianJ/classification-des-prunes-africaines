@@ -21,7 +21,7 @@ def load_and_transform_image(image_path):
     return transform(image).unsqueeze(0)  
 
 # Fonction pour la prédiction
-def predict_image(image_path, model, threshold=0.75):
+def predict_image(image_path, model, threshold=0.6):
     image_tensor = load_and_transform_image(image_path)
     model.eval()  
 
@@ -76,4 +76,4 @@ if __name__ == "__main__":
     model = load_model(model_path, num_classes)
 
     # Appel de la fonction de prédiction
-    predict_image(image_path, model, threshold=0.75)
+    predict_image(image_path, model, threshold=0.6)
