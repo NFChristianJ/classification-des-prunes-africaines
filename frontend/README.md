@@ -111,6 +111,15 @@ frontend/
 └── README.md                # This file
 ```
 
+### Environment Configuration
+
+Create a `.env` file in the project root with the following variables:
+
+```env
+REACT_APP_API_URL=http://localhost:8081  # Default API URL for the backend
+```
+
+
 ## Docker Configuration
 
 ### Dockerfile
@@ -165,6 +174,12 @@ services:
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## Live Demo
+
+A live demo of the application is available at:  
+[https://safou-check.campustech-solutions.com](https://safou-check.campustech-solutions.com)
+
+
 ## Acknowledgements
 
 - International AI Day Hackathon (JCIA) 2025 organizers
@@ -208,7 +223,7 @@ Le projet central de ce hackathon repose sur le tri automatique des prunes en si
 
 1. Clonez le dépôt:
    ```bash
-   git clone https://github.com/votrenomdutilisateur/classificateur-prunes.git
+   git clone https://github.com/NFChristianJ/classificateur-prunes.git
    cd classificateur-prunes
    ```
 
@@ -232,7 +247,7 @@ Le projet central de ce hackathon repose sur le tri automatique des prunes en si
 
 1. Clonez le dépôt:
    ```bash
-   git clone https://github.com/votrenomdutilisateur/classificateur-prunes.git
+   git clone https://github.com/NFChristianJ/classificateur-prunes.git
    cd classificateur-prunes/frontend
    ```
 
@@ -284,6 +299,14 @@ frontend/
 ├── .dockerignore            # Docker ignore file
 ├── Dockerfile               # Docker configuration
 └── README.md                # This file
+```
+
+### Configuration des variables d'environements
+
+Créer le fichier  `.env` à la racine du projet avec les variables suivantes :
+
+```env
+REACT_APP_API_URL=http://localhost:8081  # API URL par défaut pour le backend
 ```
 
 ## Configuration Docker
@@ -339,6 +362,11 @@ services:
 ## Licence
 
 Ce projet est sous licence MIT - voir le fichier LICENSE pour plus de détails.
+
+## Live Demo
+
+Une démo de l'application est disponible à :  
+[https://safou-check.campustech-solutions.com](https://safou-check.campustech-solutions.com)
 
 ## Remerciements
 
