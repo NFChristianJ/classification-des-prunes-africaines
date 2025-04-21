@@ -223,7 +223,8 @@ Le projet central de ce hackathon repose sur le tri automatique des prunes en si
 
 1. Clonez le dépôt:
    ```bash
-   git clone https://github.com/NFChristianJ/classificateur-prunes.git
+   git clone https://github.com/votrenomdutilisateur/classificateur-prunes.git
+>>>>>>> scm42
    cd classificateur-prunes
    ```
 
@@ -247,7 +248,8 @@ Le projet central de ce hackathon repose sur le tri automatique des prunes en si
 
 1. Clonez le dépôt:
    ```bash
-   git clone https://github.com/NFChristianJ/classificateur-prunes.git
+   git clone https://github.com/votrenomdutilisateur/classificateur-prunes.git
+>>>>>>> scm42
    cd classificateur-prunes/frontend
    ```
 

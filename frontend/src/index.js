@@ -8,7 +8,8 @@ import {Provider} from 'react-redux'
 
 import { store } from './store';
 
-axios.defaults.baseURL = "http://127.0.0.1";
+
+axios.defaults.baseURL = process.env.REACT_APP_API_URL  || "http://localhost:8081";
 
 document.title = "Classification de Prunes";
 const root = ReactDOM.createRoot(document.getElementById('root'));

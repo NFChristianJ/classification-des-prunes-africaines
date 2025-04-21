@@ -23,7 +23,7 @@ import {
   DialogActions,
   Grid,
   Menu,
-  MenuItem
+
 } from '@mui/material';
 import { 
   CloudUpload as CloudUploadIcon,
@@ -40,10 +40,11 @@ import {
 } from '@mui/icons-material';
 import theme from './theme';
 
+
 // Translation dictionary
 const translations = {
   en: {
-    appTitle: "Plum Classifier",
+    appTitle: "Safou Check",
     tagline: "Identify plum quality with AI technology",
     headerTitle: "Plum Quality Classifier",
     headerDescription: "Take or upload a photo of a plum to classify it as good, unripe, spotted, cracked, bruised or rotten.",
@@ -58,6 +59,7 @@ const translations = {
     home: "Home",
     about: "About",
     help: "Help",
+    isPlum: "Plum",
     connect: "Connect With Us",
     hackathon: "JCIA Hackathon 2025",
     rights: "All rights reserved.",
@@ -68,7 +70,7 @@ const translations = {
     datasetInfo: "The model was trained using the African Plums Dataset available on Kaggle."
   },
   fr: {
-    appTitle: "Classificateur de Prunes",
+    appTitle: "Safou Check",
     tagline: "Identifier la qualité des prunes avec la technologie IA",
     headerTitle: "Classificateur de Qualité des Prunes",
     headerDescription: "Prenez ou téléchargez une photo d'une prune pour la classer comme bonne, non mûre, tachetée, fissurée, meurtrie ou pourrie.",
@@ -83,6 +85,7 @@ const translations = {
     home: "Accueil",
     about: "À Propos",
     help: "Aide",
+    isPlum: "Prune",
     connect: "Nous Contacter",
     hackathon: "Hackathon JCIA 2025",
     rights: "Tous droits réservés.",
@@ -122,6 +125,7 @@ function App() {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [language, setLanguage] = useState('en');
   const [anchorEl, setAnchorEl] = useState(null);
+
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const currentYear = new Date().getFullYear();
   const t = translations[language];
@@ -149,46 +153,131 @@ function App() {
   };
 
   const captureImage = () => {
-    document.getElementById('image-input').click();
+    // Check if the device has camera capabilities
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      // For mobile devices, create a proper file input for camera
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        const input = document.getElementById('image-input');
+        input.setAttribute('capture', 'environment'); // Use rear camera if available
+        input.click();
+      } else {
+        // For desktop, just use the file picker
+        document.getElementById('image-input').click();
+      }
+    } else {
+      // Fallback for devices without camera access
+      document.getElementById('image-input').click();
+    }
   };
 
-  const processImage = () => {
-    if (!selectedImage) return;
-    
-    setIsProcessing(true);
-    
-    // Simulate API call to backend for classification
-    setTimeout(() => {
-      // Mock result with six plum categories
-      const mockCategories = ['good', 'unripe', 'spotted', 'cracked', 'bruised', 'rotten'];
-      // Generate random confidence scores that sum to 1
-      let confidences = [];
-      let sum = 0;
-      for (let i = 0; i < 5; i++) {
-        const score = Math.random() * (1 - sum);
-        confidences.push(score);
-        sum += score;
-      }
-      confidences.push(1 - sum); // Make sure they sum to 1
-      
-      // Create classification array
-      const classifications = mockCategories.map((category, index) => ({
-        category,
-        confidence: confidences[index]
-      }));
-      
-      // Sort by confidence (highest first)
-      classifications.sort((a, b) => b.confidence - a.confidence);
-      
-      setResult({
-        mainCategory: classifications[0].category,
-        confidence: Math.round(classifications[0].confidence * 100),
-        allResults: classifications
-      });
-      
-      setIsProcessing(false);
-    }, 2000);
+
+
+  const uploadImage = () => {
+    // Use a dedicated file upload input (without capture attribute)
+    document.getElementById('file-input').click();
   };
+
+
+
+const processImage = async () => {
+  if (!selectedImage) return;
+  
+  setIsProcessing(true);
+  
+  try {
+    // Create form data or use direct URL depending on your case
+    let requestData;
+    
+    // Option 1: If you have a file upload
+    if (selectedImage instanceof File) {
+      const formData = new FormData();
+      formData.append('image', selectedImage);
+      
+      // Send the image file to your API
+      const response = await axios.post('/api/api/classify/', formData);
+      requestData = formData;
+    } 
+    // Option 2: If you have an image URL
+    else if (typeof selectedImage === 'string') {
+      // Send the image URL to your API
+      requestData = { image_url: selectedImage };
+    }
+    
+    const response = await axios.post('/api/api/classify/', requestData, {
+      headers: {
+        'Content-Type': selectedImage instanceof File ? 'multipart/form-data' : 'application/json'
+      }
+    });
+    
+    // Process the response from your backend
+    const data = response.data;
+    
+    // Transform the backend response to match your application's format
+    const classifications = data.all_probabilities.map(item => ({
+      category: item.class,
+      confidence: item.probability
+    }));
+    
+    // Set the results state
+    setResult({
+      isPlum: data.is_plum,
+      mainCategory: data.top_class,
+      confidence: Math.round(data.top_probability * 100),
+      allResults: classifications
+    });
+  } catch (error) {
+    console.error('Error processing image:', error);
+    setUrlError(error.response?.data?.error || 'Failed to process image');
+  } finally {
+    setIsProcessing(false);
+  }
+};
+
+  // New function to handle URL input change
+  const handleUrlChange = (event) => {
+    setImageUrl(event.target.value);
+    setUrlError('');
+  };
+  
+  const loadImageFromUrl = async () => {
+    if (!imageUrl) {
+      setUrlError(language === 'en' ? 'Please enter a URL' : 'Veuillez entrer une URL');
+      return;
+    }
+  
+    try {
+      new URL(imageUrl);
+    } catch (e) {
+      setUrlError(language === 'en' ? 'Invalid URL format' : 'Format d\'URL invalide');
+      return;
+    }
+  
+    setLoading(true); // Start spinner
+  
+    try {
+      const response = await fetch(imageUrl);
+      if (!response.ok) throw new Error('Image fetch failed');
+  
+      const blob = await response.blob();
+      const urlParts = imageUrl.split('/');
+      const filename = urlParts[urlParts.length - 1] || 'downloaded-image';
+      const file = new File([blob], filename, { type: blob.type });
+  
+      const previewUrl = URL.createObjectURL(blob);
+      setPreview(previewUrl);
+      setSelectedImage(file);
+      setResult(null);
+      setUrlDialogOpen(false);
+      setImageUrl('');
+      setUrlError(null);
+    } catch (error) {
+      setUrlError(language === 'en' ? 'Failed to load image from URL' : 'Échec du chargement de l\'image depuis l\'URL');
+    } finally {
+      setLoading(false); // Stop spinner
+    }
+  };
+  
+  
 
   const resetAll = () => {
     setSelectedImage(null);
@@ -277,6 +366,15 @@ function App() {
                 sx={{ width: isMobile ? '100%' : 'auto' }}
               >
                 {t.takePhoto}
+
+                <input
+          id="image-input"
+          type="file"
+          accept="image/*"
+          capture="environment"
+          hidden
+          onChange={handleImageUpload}
+        />
               </Button>
               
               <Button
@@ -287,16 +385,65 @@ function App() {
               >
                 {t.uploadImage}
                 <input
-                  id="image-input"
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  onChange={handleImageUpload}
-                />
+
+          id="file-input"
+          type="file"
+          accept="image/*"
+          hidden
+          onChange={handleImageUpload}
+        />
               </Button>
+
+              <Button
+          variant="outlined"
+          startIcon={<LanguageIcon />}
+          onClick={() => setUrlDialogOpen(true)}
+          sx={{ width: isMobile ? '100%' : 'auto' }}
+        >
+          {language === 'en' ? 'Load from URL' : 'Charger depuis URL'}
+        </Button>
+
             </Box>
           </Paper>
+          {loading && (
+  <div style={{ display: 'flex', alignItems: 'center', marginTop: 16 }}>
+    <CircularProgress size={24} />
+    <span style={{ marginLeft: 12 }}>
+      {language === 'en' ? 'Loading image...' : 'Chargement de l\'image...'}
+    </span>
+  </div>
+)}
 
+
+          {/* URL Input Dialog */}
+      <Dialog open={urlDialogOpen} onClose={() => setUrlDialogOpen(false)} fullWidth maxWidth="sm">
+        <DialogTitle>
+          {language === 'en' ? 'Load image from URL' : 'Charger l\'image depuis URL'}
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label={language === 'en' ? 'Image URL' : 'URL de l\'image'}
+            type="url"
+            fullWidth
+            variant="outlined"
+            value={imageUrl}
+            onChange={handleUrlChange}
+            error={!!urlError}
+            helperText={urlError}
+            placeholder="https://example.com/image.jpg"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setUrlDialogOpen(false)}>
+            {language === 'en' ? 'Cancel' : 'Annuler'}
+          </Button>
+          <Button onClick={loadImageFromUrl} variant="contained" color="primary">
+            {language === 'en' ? 'Load' : 'Charger'}
+          </Button>
+        </DialogActions>
+      </Dialog>
           {preview && (
             <Card sx={{ mb: 4, borderRadius: 4, overflow: 'hidden' }}>
               <CardMedia
@@ -308,9 +455,10 @@ function App() {
               />
               
               <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="subtitle1" fontWeight={600}>
+
+                {/* <Typography variant="subtitle1" fontWeight={600}>
                   {selectedImage && selectedImage.name}
-                </Typography>
+                </Typography> */}
                 
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <IconButton size="small" onClick={resetAll}>
@@ -324,7 +472,8 @@ function App() {
                   >
                     {isProcessing ? (
                       <>
-                        <CircularProgress size={20} sx={{ mr: 1, color: 'white' }} />
+
+                        <CircularProgress size={20} sx={{ mr: 1, color: 'blue' }} />
                         {t.processing}
                       </>
                     ) : t.classifyFruit}
@@ -334,6 +483,7 @@ function App() {
             </Card>
           )}
 
+          {console.log(result)}
           {result && (
             <Paper elevation={0} sx={{ p: 4, borderRadius: 4 }}>
               <Typography variant="h5" gutterBottom align="center">
@@ -352,17 +502,40 @@ function App() {
                   }} 
                 />
               </Box>
-              
-              <Typography variant="subtitle1" align="center" gutterBottom>
+
+              <Typography 
+  variant="subtitle1" 
+  align="center" 
+  gutterBottom 
+  sx={{ 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    gap: 1 
+  }}
+>
+  {t.isPlum}: 
+  {result.isPlum ? 
+    <CheckCircleIcon 
+      color="success" 
+      sx={{ fontSize: 28, verticalAlign: 'middle'}} 
+    /> : 
+    <CancelIcon 
+      color="error" 
+      sx={{ fontSize: 28, verticalAlign: 'middle'}} 
+    />
+  }
+</Typography>
+             { result.isPlum && <Typography variant="subtitle1" align="center" gutterBottom>
                 {t.confidence}: {result.confidence}%
-              </Typography>
+              </Typography>}
               
               <Box sx={{ mt: 4 }}>
-                <Typography variant="subtitle2" gutterBottom>
+              { result.isPlum &&  <Typography variant="subtitle2" gutterBottom>
                   {t.detailedResults}:
-                </Typography>
+                </Typography> }
                 
-                {result.allResults.map((item) => (
+                {result.isPlum && result.allResults.map((item) => (
                   <Box 
                     key={item.category}
                     sx={{ 
